@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Recycled Products Store</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-image: url(modified_bottle_caps.jpg);
+      background-size: cover;
+      background-position: center;
+      height: 100vh;
+    }
+    header {
+      background: rgb(188, 226, 213);
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+    .container {
+      width: 80%;
+      margin: auto;
+      overflow: hidden;
+    }
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .product {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .product img {
+      width: 100%;
+      border-radius: 10px;
+    }
+    .product h3 {
+      margin: 10px 0;
+    }
+    .product p {
+      color: #333;
+    }
+    .buy-btn {
+      display: inline-block;
+      padding: 10px 15px;
+      background: #27ae60;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+    .buy-btn:hover {
+      background: #219150;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>
+      <img src="logo.jpg" alt="PETRACONNECT Logo" width="100" />
+      <p>Recycled Products Store</p>
+      <p>Browse and purchase eco-friendly products.</p>
+    </h1>
+  </header>
+  <div class="container">
+    <div class="products">
+      <div class="product">
+        <img src="https://source.unsplash.com/250x250/?recycle,bag" alt="Recycled Bag">
+        <h3>Recycled Bag</h3>
+        <p>Eco-friendly bag made from recycled plastic.</p>
+        <button class="buy-btn" data-product="Recycled Bag">Buy Now</button>
+      </div>
+      <div class="product">
+        <img src="https://source.unsplash.com/250x250/?recycle,bottle" alt="Recycled Bottle">
+        <h3>Recycled Bottle</h3>
+        <p>Durable water bottle made from 100% recycled materials.</p>
+        <button class="buy-btn" data-product="Recycled Bottle">Buy Now</button>
+      </div>
+      <div class="product">
+        <img src="https://source.unsplash.com/250x250/?recycle,notebook" alt="Recycled Notebook">
+        <h3>Recycled Notebook</h3>
+        <p>Notebook crafted from recycled paper and materials.</p>
+        <button class="buy-btn" data-product="Recycled Notebook">Buy Now</button>
+      </div>
+      <div class="product">
+        <img src="https://source.unsplash.com/250x250/?recycled,furniture" alt="Recycled Furniture">
+        <h3>Recycled Furniture</h3>
+        <p>Beautiful furniture made from repurposed materials.</p>
+        <button class="buy-btn" data-product="Recycled Furniture">Buy Now</button>
+      </div>
+      <div class="product">
+        <img src="https://source.unsplash.com/250x250/?recycled,art" alt="Recycled Art">
+        <h3>Recycled Art</h3>
+        <p>Creative artwork made from upcycled materials.</p>
+        <button class="buy-btn" data-product="Recycled Art">Buy Now</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBNjQdKnQPiEzAnYhDTiAydTk0M7S1s7WM",
+  authDomain: "petraconnect-inc.firebaseapp.com",
+  projectId: "petraconnect-inc",
+  storageBucket: "petraconnect-inc.firebasestorage.app",
+  messagingSenderId: "163945805460",
+  appId: "1:163945805460:web:7eed78451c9282c8d46681",
+  measurementId: "G-4ZPL2XXBQN"
+};
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    document.querySelectorAll(".buy-btn").forEach(button => {
+      button.addEventListener("click", async () => {
+        const product = button.getAttribute("data-product");
+        const timestamp = new Date().toISOString();
+
+        try {
+          await addDoc(collection(db, "productOrders"), {
+            product,
+            timestamp
+          });
+          alert(`Order placed for: ${product}`);
+        } catch (error) {
+          console.error("Error saving to Firestore:", error);
+          alert("Failed to place order. Please try again.");
+        }
+      });
+    });
+  </script>
+</body>
+</html>

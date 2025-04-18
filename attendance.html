@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Staff Attendance - PETRACONNECT</title>
+  <style>
+    body {
+      background-image: url('bottle-7595561_640.jpg');
+      background-size: cover;
+      background-position: center;
+      height: 100vh;
+      margin: 0;
+      font-family: 'Times New Roman', Times, serif;
+      padding: 0;
+      color: #333;
+      text-align: center;
+    }
+
+    header {
+      background: rgb(188, 226, 213);
+      padding: 20px;
+    }
+
+    header img {
+      width: 150px;
+      display: block;
+      margin: 0 auto;
+    }
+
+    main {
+      margin-top: 40px;
+    }
+
+    form {
+      padding: 40px;
+      background: rgb(212, 243, 233);
+      margin: 0 auto;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 500px;
+    }
+
+    form input,
+    form button {
+      width: 80%;
+      padding: 10px;
+      margin: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    form button {
+      background: #2ecc71;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 200px;
+      transition: background 0.3s;
+    }
+
+    form button:hover {
+      background: #27ae60;
+      font-size: 1.1rem;
+    }
+
+    table {
+      margin: 20px auto;
+      width: 90%;
+      max-width: 800px;
+      background: rgb(255, 255, 255, 0.9);
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 12px;
+      border: 1px solid #ccc;
+    }
+
+    th {
+      background: rgb(188, 226, 213);
+    }
+
+    footer {
+      background: rgb(95, 133, 120);
+      color: #333;
+      padding: 15px;
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    footer img {
+      width: 20px;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Staff Attendance</h1>
+    <p>Please record your attendance below.</p>
+  </header>
+
+  <main>
+    <form id="attendanceForm">
+      <input type="text" id="staffID" name="staffID" placeholder="Staff ID" required />
+      <input type="text" id="digitalCoupon" name="digitalCoupon" placeholder="Digital Coupon Code" required />
+      <button type="submit">Submit Attendance</button>
+    </form>
+
+    <section>
+      <h2>Attendance Records</h2>
+      <table id="attendanceTable">
+        <thead>
+          <tr>
+            <th>Staff ID</th>
+            <th>Coupon</th>
+            <th>Timestamp</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Attendance records will appear here -->
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer>
+  <p><strong>CHIEF EXECUTIVE OFFICER:</strong> Miss Salifu Blessing Desina <img src="download.jpeg" alt=""> +233200825913</p>
+    <p><strong>CHIEF OPERATIONS OFFICER:</strong> Master Yinsigna Noble Yinmalya <img src="download.jpeg" alt="Executive Officers"> +233248082393</p>
+    <p><strong>CHIEF TECHNOLOGY OFFICER:</strong> Mr. Appiah-Asare Edward <img src="download.jpeg" alt="Executive Officers"> +233530415528</p>
+    <p><strong>FINANCIAL SECRETARY:</strong> Miss Sekwo Joyceline Wekwe <img src="download.jpeg" alt="Executive Officers"> +233595406368</p>
+    <p><strong>HUMAN RESOURCE MANAGEMENT:</strong> Mr. Adu Michael Johnson Junior <img src="download.jpeg" alt="Executive Officers"> +233257508696</p>
+    <p><strong>CHIEF MARKETING OFFICER:</strong> Mr. Adorka Clinton Jonathan <img src="download.jpeg" alt="Executive Officers"> +233537940075</p>
+    <p>&copy; 2025 PETRACONNECT INC. All Rights Reserved.</p>
+  </footer>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js" type="module"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js" type="module"></script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBNjQdKnQPiEzAnYhDTiAydTk0M7S1s7WM",
+    authDomain: "petraconnect-inc.firebaseapp.com",
+    projectId: "petraconnect-inc",
+    storageBucket: "petraconnect-inc.firebasestorage.app",
+    messagingSenderId: "163945805460",
+    appId: "1:163945805460:web:7eed78451c9282c8d46681",
+    measurementId: "G-4ZPL2XXBQN"
+  };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const attendanceForm = document.getElementById("attendanceForm");
+    const attendanceTable = document.getElementById("attendanceTable").querySelector("tbody");
+
+    attendanceForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const staffID = document.getElementById("staffID").value;
+      const digitalCoupon = document.getElementById("digitalCoupon").value;
+
+      try {
+        await addDoc(collection(db, "staffAttendance"), {
+          staffID,
+          digitalCoupon,
+          timestamp: new Date().toLocaleString()
+        });
+        alert("Attendance submitted successfully!");
+        attendanceForm.reset();
+      } catch (err) {
+        alert("Failed to submit attendance: " + err.message);
+      }
+    });
+
+    // Real-time listener
+    const q = query(collection(db, "staffAttendance"), orderBy("timestamp", "desc"));
+
+    onSnapshot(q, (snapshot) => {
+      attendanceTable.innerHTML = "";
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const row = `
+          <tr>
+            <td>${data.staffID}</td>
+            <td>${data.digitalCoupon}</td>
+            <td>${data.timestamp}</td>
+          </tr>
+        `;
+        attendanceTable.innerHTML += row;
+      });
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetraConnect Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+        }
+        #map {
+            height: 100vh;
+            width: 100%;
+        }
+        .button {
+            background-color: #007bff;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        const providerLocations = [
+            { id: 1, name: "Provider A", lat: 40.7128, lng: -74.006 },
+            { id: 2, name: "Provider B", lat: 34.0522, lng: -118.2437 },
+            { id: 3, name: "Provider C", lat: 51.5074, lng: -0.1278 }
+        ];
+
+        const map = L.map('map').setView([20, 0], 2);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+        navigator.geolocation.getCurrentPosition(position => {
+            const userLocation = [position.coords.latitude, position.coords.longitude];
+            L.marker(userLocation, {
+                icon: L.icon({
+                    iconUrl: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41]
+                })
+            }).addTo(map).bindPopup("Your Location").openPopup();
+        }, () => {
+            alert("Unable to retrieve your location");
+        });
+
+        providerLocations.forEach(provider => {
+            const marker = L.marker([provider.lat, provider.lng]).addTo(map);
+            marker.bindPopup(
+                `<strong>${provider.name}</strong><br>
+                <button class='button' onclick='getDirections(${provider.lat}, ${provider.lng})'>Get Directions</button>`
+            );
+        });
+
+        function getDirections(lat, lng) {
+            navigator.geolocation.getCurrentPosition(position => {
+                const userLat = position.coords.latitude;
+                const userLng = position.coords.longitude;
+                window.open(`https://www.google.com/maps/dir/${userLat},${userLng}/${lat},${lng}`, '_blank');
+            }, () => {
+                alert("User location not available");
+            });
+        }
+    </script>
+</body>
+</html>

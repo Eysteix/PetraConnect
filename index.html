@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Staff Sign In - PETRACONNECT</title>
+  <style>
+    body {
+      background-image: url('bottle-7595561_640.jpg');
+      background-size: cover;
+      background-position: center;
+      font-family: 'Times New Roman', Times, serif;
+      margin: 0;
+      padding: 0;
+      color: #333;
+      text-align: center;
+    }
+
+    header {
+      background: rgb(188, 226, 213);
+      padding: 20px;
+    }
+
+    nav {
+      background: rgb(95, 133, 120);
+      padding: 15px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: blue;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    nav a:hover {
+      color: #2ecc71;
+      font-size: 1.5rem;
+    }
+
+    section {
+      padding: 40px;
+      background: rgb(212, 243, 233);
+      margin: 20px auto;
+      border-radius: 10px;
+      max-width: 600px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    form input, form button {
+      width: 80%;
+      padding: 10px;
+      margin: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    form button {
+      background: #2ecc71;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 200px;
+      transition: background 0.3s;
+    }
+
+    form button:hover {
+      background: #27ae60;
+      font-size: 1.1rem;
+    }
+
+    table {
+      width: 90%;
+      margin: 20px auto;
+      background: rgba(255, 255, 255, 0.9);
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 12px;
+      border: 1px solid #ccc;
+    }
+
+    th {
+      background: rgb(188, 226, 213);
+    }
+
+    footer {
+      background: rgb(95, 133, 120);
+      color: #333;
+      padding: 15px;
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    footer img {
+      width: 20px;
+      vertical-align: middle;
+    }
+
+    #adminSection {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Staff Sign-In</h1>
+    <p>Welcome to <strong>PETRACONNECT</strong> staff portal.</p>
+  </header>
+
+  <nav>
+    <a href="trial004.html">Home</a>
+    <a href="recycled.html">Products</a>
+    <a href="attendance.html">Attendance</a>
+    <a href="admin.html">Admin Dashboard</a>
+  </nav>
+
+  <section>
+    <form id="signInForm">
+      <input type="text" id="staffName" placeholder="Your Name" required>
+      <input type="password" id="staffPassword" placeholder="Your Password" required>
+      <button type="submit">Sign In</button>
+    </form>
+  </section>
+
+  <section id="adminSection">
+    <h2>Upload File (Admin Only)</h2>
+    <form id="uploadForm">
+      <input type="file" id="fileInput" required>
+      <button type="submit">Upload File</button>
+    </form>
+
+    <h3>Uploaded Files</h3>
+    <table id="uploadsTable">
+      <thead>
+        <tr>
+          <th>File Name</th>
+          <th>Upload Time</th>
+          <th>Download</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <footer>
+    <p><strong>CHIEF EXECUTIVE OFFICER:</strong> Miss Salifu Blessing Desina <img src="download.jpeg"  alt="An executive photo"alt="Miss Salifu's Picture"> +233200825913</p>
+    <p><strong>CHIEF OPERATIONS OFFICER:</strong> Master Yinsigna Noble Yinmalya <img src="download.jpeg"  alt="An executive photo"alt="Master Yinsigna Picture"> +233248082393</p>
+    <p><strong>CHIEF TECHNOLOGY OFFICER:</strong> Mr. Appiah-Asare Edward <img src="download.jpeg"  alt="An executive photo"alt="Mr. Appiah-Asare Picture"> +233530415528</p>
+    <p><strong>FINANCIAL SECRETARY:</strong> Miss Sekwo Joyceline Wekwe <img src="download.jpeg"  alt="An executive photo"alt="Miss Sekwo Picture"> +233595406368</p>
+    <p><strong>HUMAN RESOURCE MANAGEMENT:</strong> Mr. Adu Michael Johnson Junior <img src="download.jpeg"  alt="An executive photo"alt="Mr.Adu Michael Johnson"> +233257508696</p>
+    <p><strong>CHIEF MARKETING OFFICER:</strong> Mr. Adorka Clinton Jonathan <img src="download.jpeg"  alt="An executive photo"alt="Mr. Adorka"> </p>
+    <p>&copy; 2025 PETRACONNECT INC. All Rights Reserved.</p>
+  </footer>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js" type="module"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js" type="module"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-storage.js" type="module"></script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-storage.js";
+
+   const firebaseConfig = {
+     apiKey: "AIzaSyBNjQdKnQPiEzAnYhDTiAydTk0M7S1s7WM",
+     authDomain: "petraconnect-inc.firebaseapp.com",
+     projectId: "petraconnect-inc",
+     storageBucket: "petraconnect-inc.firebasestorage.app",
+     messagingSenderId: "163945805460",
+     appId: "1:163945805460:web:7eed78451c9282c8d46681",
+     measurementId: "G-4ZPL2XXBQN"
+   };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+
+    const uploadsRef = collection(db, "uploadedFiles");
+    const uploadsTable = document.getElementById("uploadsTable").querySelector("tbody");
+    const adminSection = document.getElementById("adminSection");
+
+    let isAdmin = false;
+
+    document.getElementById("signInForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const name = document.getElementById("staffName").value.trim();
+      const password = document.getElementById("staffPassword").value.trim();
+
+      if (name.toLowerCase() === "admin" && password === "admin123") {
+        isAdmin = true;
+        adminSection.style.display = "block";
+        alert("Welcome Admin. File upload is enabled.");
+      } else {
+        alert("Signed in. But file upload is admin-only.");
+      }
+
+      e.target.reset();
+    });
+
+    // Upload File to Firebase
+    document.getElementById("uploadForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!isAdmin) return alert("Only admin can upload files.");
+
+      const file = document.getElementById("fileInput").files[0];
+      if (!file) return alert("Please select a file.");
+
+      const fileRef = ref(storage, `uploads/${file.name}`);
+      try {
+        await uploadBytes(fileRef, file);
+        const url = await getDownloadURL(fileRef);
+
+        await addDoc(uploadsRef, {
+          name: file.name,
+          time: new Date().toLocaleString(),
+          url: url
+        });
+
+        alert("File uploaded!");
+        document.getElementById("fileInput").value = "";
+      } catch (err) {
+        alert("Upload failed: " + err.message);
+      }
+    });
+
+    // Show uploaded files with download links
+    onSnapshot(query(uploadsRef, orderBy("time", "desc")), snapshot => {
+      uploadsTable.innerHTML = "";
+      snapshot.forEach(doc => {
+        const file = doc.data();
+        uploadsTable.innerHTML += `
+          <tr>
+            <td>${file.name}</td>
+            <td>${file.time}</td>
+            <td><a href="${file.url}" target="_blank">Download</a></td>
+          </tr>
+        `;
+      });
+    });
+  </script>
+
+</body>
+</html>
