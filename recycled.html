@@ -10,10 +10,19 @@
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      background-image: url(modified_bottle_caps.jpg);
+      background-image: url(bottle.jpeg);
       background-size: cover;
       background-position: center;
       height: 100vh;
+      position: relative;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: -1;
     }
     header {
       background: rgb(188, 226, 213);
@@ -21,7 +30,19 @@
       padding: 15px;
       text-align: center;
     }
-    .container {
+    header img {
+      display: block;
+      margin: 0 auto 10px;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+    header p {
+      margin: 5px 0;
+      color: #333;
+    }
+    main.container {
       width: 80%;
       margin: auto;
       overflow: hidden;
@@ -57,89 +78,184 @@
       text-decoration: none;
       border-radius: 5px;
       margin-top: 10px;
+      cursor: pointer;
     }
     .buy-btn:hover {
       background: #219150;
     }
+    footer {
+      text-align: center;
+      background: #eee;
+      padding: 15px;
+      margin-top: 20px;
+    }
+    #toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #27ae60;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      display: none;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      z-index: 9999;
+    }
+    #orderForm {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 0px 20px rgba(0,0,0,0.3);
+      z-index: 10000;
+      width: 300px;
+    }
+    #orderForm input, #orderForm select, #orderForm button {
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    #orderForm h3 {
+      margin-top: 0;
+    }
+    footer { background:rgb(95, 133, 120); color: #333; padding: 15px; margin-top: 20px; text-align: center; }
   </style>
 </head>
 <body>
   <header>
-    <h1>
-      <img src="logo.jpg" alt="PETRACONNECT Logo" width="100" />
-      <p>Recycled Products Store</p>
-      <p>Browse and purchase eco-friendly products.</p>
-    </h1>
+    <img src="./logo.jpeg" alt="PETRA CONNECT Logo" width="100" />
+    <h1>Recycled Products Store</h1>
+    <p>Browse and purchase eco-friendly products.</p>
   </header>
-  <div class="container">
-    <div class="products">
+  <main class="container">
+    <section class="products">
       <div class="product">
-        <img src="https://source.unsplash.com/250x250/?recycle,bag" alt="Recycled Bag">
+        <img src="https://source.unsplash.com/250x250/?recycle,bag" alt="Eco-friendly bag made from recycled plastic">
         <h3>Recycled Bag</h3>
         <p>Eco-friendly bag made from recycled plastic.</p>
         <button class="buy-btn" data-product="Recycled Bag">Buy Now</button>
       </div>
       <div class="product">
-        <img src="https://source.unsplash.com/250x250/?recycle,bottle" alt="Recycled Bottle">
+        <img src="https://source.unsplash.com/250x250/?recycle,bottle" alt="Durable water bottle made from 100% recycled materials">
         <h3>Recycled Bottle</h3>
         <p>Durable water bottle made from 100% recycled materials.</p>
         <button class="buy-btn" data-product="Recycled Bottle">Buy Now</button>
       </div>
       <div class="product">
-        <img src="https://source.unsplash.com/250x250/?recycle,notebook" alt="Recycled Notebook">
+        <img src="https://source.unsplash.com/250x250/?recycle,notebook" alt="Notebook crafted from recycled paper and materials">
         <h3>Recycled Notebook</h3>
         <p>Notebook crafted from recycled paper and materials.</p>
         <button class="buy-btn" data-product="Recycled Notebook">Buy Now</button>
       </div>
       <div class="product">
-        <img src="https://source.unsplash.com/250x250/?recycled,furniture" alt="Recycled Furniture">
+        <img src="https://source.unsplash.com/250x250/?recycled,furniture" alt="Beautiful furniture made from repurposed materials">
         <h3>Recycled Furniture</h3>
         <p>Beautiful furniture made from repurposed materials.</p>
         <button class="buy-btn" data-product="Recycled Furniture">Buy Now</button>
       </div>
       <div class="product">
-        <img src="https://source.unsplash.com/250x250/?recycled,art" alt="Recycled Art">
+        <img src="https://source.unsplash.com/250x250/?recycled,art" alt="Creative artwork made from upcycled materials">
         <h3>Recycled Art</h3>
         <p>Creative artwork made from upcycled materials.</p>
         <button class="buy-btn" data-product="Recycled Art">Buy Now</button>
       </div>
-    </div>
+    </section>
+  </main>
+  
+  <div id="toast"></div>
+  <div id="orderForm">
+    <h3>Complete Your Order</h3>
+    <input type="number" id="quantity" placeholder="Number of items" min="1" required>
+    <select id="paymentMethod">
+      <option value="">Select Payment Method</option>
+      <option value="Mobile Money">Mobile Money</option>
+      <option value="Credit Card">Credit Card</option>
+      <option value="Other">Other</option>
+    </select>
+    <input type="email" id="email" placeholder="Your email" required>
+    <button id="submitOrder">Submit Order</button>
   </div>
-
+  <footer>
+    <p><strong>CHIEF EXECUTIVE OFFICER:</strong> Miss Salifu Blessing Desina <img src="download.jpeg" width="20px"> +233200825913</p>
+    <p><strong>CHIEF OPERATIONS OFFICER:</strong> Master Yinsigna Noble Yinmalya <img src="download.jpeg" width="20px"> +233248082393</p>
+    <p><strong>CHIEF TECHNOLOGY OFFICER:</strong> Mr. Appiah-Asare Edward <img src="download.jpeg"width="20px"> +233530415528</p>
+    <p><strong>FINANCIAL SECRETARY:</strong> Miss Sekwo Joyceline Wekwe <img src="download.jpeg"width="20px"> +233595406368</p>
+    <p><strong>HUMAN RESOURCE MANAGEMENT:</strong> Mr. Adu Michael Johnson Junior <img src="download.jpeg"width="20px"> +233257508696</p>
+    <p><strong>CHIEF MARKETING OFFICER:</strong> Mr. Adorka Clinton Jonathan <img src="download.jpeg"width="20px"> +233537940075</p>
+    <p>&copy; 2025 PETRACONNECT INC. All Rights Reserved.</p>
+  </footer>
   <!-- Firebase SDK -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
     import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBNjQdKnQPiEzAnYhDTiAydTk0M7S1s7WM",
-  authDomain: "petraconnect-inc.firebaseapp.com",
-  projectId: "petraconnect-inc",
-  storageBucket: "petraconnect-inc.firebasestorage.app",
-  messagingSenderId: "163945805460",
-  appId: "1:163945805460:web:7eed78451c9282c8d46681",
-  measurementId: "G-4ZPL2XXBQN"
-};
+    const firebaseConfig = {
+      apiKey: "AIzaSyBNjQdKnQPiEzAnYhDTiAydTk0M7S1s7WM",
+      authDomain: "petraconnect-inc.firebaseapp.com",
+      projectId: "petraconnect-inc",
+      storageBucket: "petraconnect-inc.firebasestorage.app",
+      messagingSenderId: "163945805460",
+      appId: "1:163945805460:web:7eed78451c9282c8d46681",
+      measurementId: "G-4ZPL2XXBQN"
+    };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    document.querySelectorAll(".buy-btn").forEach(button => {
-      button.addEventListener("click", async () => {
-        const product = button.getAttribute("data-product");
-        const timestamp = new Date().toISOString();
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.style.display = "block";
+      setTimeout(() => {
+        toast.style.display = "none";
+      }, 3000);
+    }
 
-        try {
-          await addDoc(collection(db, "productOrders"), {
-            product,
-            timestamp
-          });
-          alert(`Order placed for: ${product}`);
-        } catch (error) {
-          console.error("Error saving to Firestore:", error);
-          alert("Failed to place order. Please try again.");
-        }
+    let selectedProduct = "";
+
+    document.querySelectorAll(".buy-btn").forEach(button => {
+      button.addEventListener("click", () => {
+        selectedProduct = button.getAttribute("data-product");
+        document.getElementById("orderForm").style.display = "block";
       });
+    });
+
+    document.getElementById("submitOrder").addEventListener("click", async () => {
+      const quantity = document.getElementById("quantity").value;
+      const paymentMethod = document.getElementById("paymentMethod").value;
+      const email = document.getElementById("email").value;
+
+      if (!quantity || !paymentMethod || !email) {
+        showToast("Please fill out all fields.");
+        return;
+      }
+
+      const timestamp = new Date().toISOString();
+
+      try {
+        await addDoc(collection(db, "productOrders"), {
+          product: selectedProduct,
+          quantity,
+          paymentMethod,
+          email,
+          timestamp
+        });
+        showToast(`Order placed for: ${selectedProduct}`);
+        document.getElementById("orderForm").style.display = "none";
+        document.getElementById("quantity").value = "";
+        document.getElementById("paymentMethod").value = "";
+        document.getElementById("email").value = "";
+      } catch (error) {
+        console.error("Error saving to Firestore:", error);
+        showToast("Failed to place order. Please try again.");
+      }
     });
   </script>
 </body>
